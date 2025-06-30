@@ -54,6 +54,7 @@ class AppHeader extends HTMLElement {
                 .title::before {
                     content: "📝";
                     font-size: 2rem;
+                    animation: bounce 2s infinite;
                 }
                 
                 .subtitle {
@@ -70,6 +71,18 @@ class AppHeader extends HTMLElement {
                     to {
                         opacity: 1;
                         transform: translateY(0);
+                    }
+                }
+                
+                @keyframes bounce {
+                    0%, 20%, 50%, 80%, 100% {
+                        transform: translateY(0);
+                    }
+                    40% {
+                        transform: translateY(-10px);
+                    }
+                    60% {
+                        transform: translateY(-5px);
                     }
                 }
                 

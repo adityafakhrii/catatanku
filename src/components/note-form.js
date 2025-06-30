@@ -35,6 +35,7 @@ class NoteForm extends HTMLElement {
                 .form-title::before {
                     content: "✏️";
                     font-size: 1.3rem;
+                    animation: wiggle 2s infinite;
                 }
                 
                 .form-group {
@@ -69,6 +70,7 @@ class NoteForm extends HTMLElement {
                     border-color: #667eea;
                     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
                     background: white;
+                    transform: scale(1.02);
                 }
                 
                 .form-textarea {
@@ -94,11 +96,28 @@ class NoteForm extends HTMLElement {
                     justify-content: center;
                     gap: 10px;
                     box-sizing: border-box;
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .form-button::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                    transition: left 0.5s;
                 }
                 
                 .form-button:hover {
                     transform: translateY(-2px);
                     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+                }
+                
+                .form-button:hover::before {
+                    left: 100%;
                 }
                 
                 .form-button:active {
@@ -127,6 +146,7 @@ class NoteForm extends HTMLElement {
                 .form-textarea.error {
                     border-color: #e53e3e;
                     background: #fef5f5;
+                    animation: shake 0.5s ease-in-out;
                 }
                 
                 .form-input.valid,
@@ -168,6 +188,22 @@ class NoteForm extends HTMLElement {
                 @keyframes fadeIn {
                     from { opacity: 0; }
                     to { opacity: 1; }
+                }
+                
+                @keyframes wiggle {
+                    0%, 7% { transform: rotateZ(0); }
+                    15% { transform: rotateZ(-15deg); }
+                    20% { transform: rotateZ(10deg); }
+                    25% { transform: rotateZ(-10deg); }
+                    30% { transform: rotateZ(6deg); }
+                    35% { transform: rotateZ(-4deg); }
+                    40%, 100% { transform: rotateZ(0); }
+                }
+                
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
                 }
                 
                 @media (max-width: 768px) {
@@ -325,16 +361,14 @@ class NoteForm extends HTMLElement {
         errorElement.className = 'validation-message';
     }
 
-    submitForm() {
+    async submitForm() {
         const titleInput = this.shadowRoot.getElementById('title');
         const bodyInput = this.shadowRoot.getElementById('body');
         const submitBtn = this.shadowRoot.getElementById('submit-btn');
 
         const noteData = {
             title: titleInput.value.trim(),
-            body: bodyInput.value.trim(),
-            createdAt: new Date().toISOString(),
-            archived: false
+            body: bodyInput.value.trim()
         };
 
         // Disable button temporarily
@@ -347,7 +381,7 @@ class NoteForm extends HTMLElement {
             detail: noteData
         }));
 
-        // Reset form
+        // Reset form after successful submission
         setTimeout(() => {
             titleInput.value = '';
             bodyInput.value = '';

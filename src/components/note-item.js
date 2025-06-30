@@ -5,7 +5,7 @@ class NoteItem extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['note-title', 'note-body', 'note-date', 'archived'];
+        return ['note-id', 'note-title', 'note-body', 'note-date', 'archived'];
     }
 
     connectedCallback() {
@@ -28,6 +28,7 @@ class NoteItem extends HTMLElement {
     }
 
     render() {
+        const noteId = this.getAttribute('note-id') || '';
         const title = this.getAttribute('note-title') || 'Tanpa Judul';
         const body = this.getAttribute('note-body') || 'Tanpa isi';
         const createdAt = this.getAttribute('note-date') || new Date().toISOString();
@@ -72,7 +73,7 @@ class NoteItem extends HTMLElement {
                 }
                 
                 .note-card:hover {
-                    transform: translateY(-5px);
+                    transform: translateY(-5px) scale(1.02);
                     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
                 }
                 
@@ -104,6 +105,7 @@ class NoteItem extends HTMLElement {
                     font-weight: 500;
                     white-space: nowrap;
                     flex-shrink: 0;
+                    animation: pulse 2s infinite;
                 }
                 
                 .note-body {
@@ -147,21 +149,44 @@ class NoteItem extends HTMLElement {
                 .action-btn {
                     background: none;
                     border: none;
-                    padding: 6px;
-                    border-radius: 6px;
+                    padding: 8px;
+                    border-radius: 8px;
                     cursor: pointer;
-                    transition: all 0.2s ease;
-                    font-size: 0.9rem;
+                    transition: all 0.3s ease;
+                    font-size: 1rem;
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .action-btn::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 0;
+                    height: 0;
+                    background: rgba(102, 126, 234, 0.2);
+                    border-radius: 50%;
+                    transition: all 0.3s ease;
+                    transform: translate(-50%, -50%);
+                }
+                
+                .action-btn:hover::before {
+                    width: 40px;
+                    height: 40px;
                 }
                 
                 .action-btn:hover {
-                    background: rgba(102, 126, 234, 0.1);
-                    transform: scale(1.1);
+                    transform: scale(1.2);
+                    color: #667eea;
                 }
                 
                 .delete-btn:hover {
-                    background: rgba(239, 68, 68, 0.1);
                     color: #ef4444;
+                }
+                
+                .delete-btn:hover::before {
+                    background: rgba(239, 68, 68, 0.2);
                 }
                 
                 @keyframes fadeInUp {
@@ -173,6 +198,11 @@ class NoteItem extends HTMLElement {
                         opacity: 1;
                         transform: translateY(0);
                     }
+                }
+                
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.7; }
                 }
                 
                 @media (max-width: 480px) {
@@ -217,10 +247,10 @@ class NoteItem extends HTMLElement {
                         ${this.formatDate(createdAt)}
                     </time>
                     <div class="note-actions">
-                        <button class="action-btn archive-btn" title="${archived ? 'Batal Arsip' : 'Arsipkan'}">
+                        <button class="action-btn archive-btn" title="${archived ? 'Batal Arsip' : 'Arsipkan'}" data-note-id="${noteId}">
                             <i class="fas ${archived ? 'fa-box-open' : 'fa-box'}"></i>
                         </button>
-                        <button class="action-btn delete-btn" title="Hapus">
+                        <button class="action-btn delete-btn" title="Hapus" data-note-id="${noteId}">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
@@ -235,13 +265,17 @@ class NoteItem extends HTMLElement {
         archiveBtn.addEventListener('click', () => {
             this.dispatchEvent(new CustomEvent('archive-note', {
                 bubbles: true,
-                detail: { archived: !archived }
+                detail: { 
+                    noteId: noteId,
+                    archived: !archived 
+                }
             }));
         });
 
         deleteBtn.addEventListener('click', () => {
             this.dispatchEvent(new CustomEvent('delete-note', {
-                bubbles: true
+                bubbles: true,
+                detail: { noteId: noteId }
             }));
         });
     }
