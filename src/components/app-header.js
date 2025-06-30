@@ -1,26 +1,26 @@
 class AppHeader extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
 
-    static get observedAttributes() {
-        return ['title', 'subtitle'];
-    }
+  static get observedAttributes() {
+    return ["title", "subtitle"];
+  }
 
-    connectedCallback() {
-        this.render();
-    }
+  connectedCallback() {
+    this.render();
+  }
 
-    attributeChangedCallback() {
-        this.render();
-    }
+  attributeChangedCallback() {
+    this.render();
+  }
 
-    render() {
-        const title = this.getAttribute('title') || 'Catatanku';
-        const subtitle = this.getAttribute('subtitle') || 'Aplikasi Catatan';
+  render() {
+    const title = this.getAttribute("title") || "Catatanku";
+    const subtitle = this.getAttribute("subtitle") || "Aplikasi Catatan";
 
-        this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     display: block;
@@ -111,7 +111,7 @@ class AppHeader extends HTMLElement {
                 <p class="subtitle">${subtitle}</p>
             </header>
         `;
-    }
+  }
 }
 
-customElements.define('app-header', AppHeader);
+customElements.define("app-header", AppHeader);

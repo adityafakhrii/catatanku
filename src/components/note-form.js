@@ -1,16 +1,16 @@
 class NoteForm extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
 
-    connectedCallback() {
-        this.render();
-        this.setupValidation();
-    }
+  connectedCallback() {
+    this.render();
+    this.setupValidation();
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     display: block;
@@ -259,143 +259,150 @@ class NoteForm extends HTMLElement {
                 </form>
             </div>
         `;
+  }
+
+  setupValidation() {
+    const form = this.shadowRoot.getElementById("note-form");
+    const titleInput = this.shadowRoot.getElementById("title");
+    const bodyInput = this.shadowRoot.getElementById("body");
+    const submitBtn = this.shadowRoot.getElementById("submit-btn");
+
+    // Real-time validation
+    titleInput.addEventListener("input", () => this.validateTitle());
+    bodyInput.addEventListener("input", () => this.validateBody());
+
+    // Form submission
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (this.validateForm()) {
+        this.submitForm();
+      }
+    });
+  }
+
+  validateTitle() {
+    const titleInput = this.shadowRoot.getElementById("title");
+    const titleError = this.shadowRoot.getElementById("title-error");
+    const titleCounter = this.shadowRoot.getElementById("title-counter");
+    const value = titleInput.value.trim();
+    const length = value.length;
+
+    titleCounter.textContent = `${length}/100`;
+
+    if (length > 80) {
+      titleCounter.className = "char-counter warning";
+    } else if (length > 95) {
+      titleCounter.className = "char-counter error";
+    } else {
+      titleCounter.className = "char-counter";
     }
 
-    setupValidation() {
-        const form = this.shadowRoot.getElementById('note-form');
-        const titleInput = this.shadowRoot.getElementById('title');
-        const bodyInput = this.shadowRoot.getElementById('body');
-        const submitBtn = this.shadowRoot.getElementById('submit-btn');
+    if (length === 0) {
+      this.showError(
+        titleInput,
+        titleError,
+        "Judul catatan tidak boleh kosong",
+      );
+      return false;
+    } else if (length < 3) {
+      this.showError(titleInput, titleError, "Judul minimal 3 karakter");
+      return false;
+    } else {
+      this.showValid(titleInput, titleError);
+      return true;
+    }
+  }
 
-        // Real-time validation
-        titleInput.addEventListener('input', () => this.validateTitle());
-        bodyInput.addEventListener('input', () => this.validateBody());
-        
-        // Form submission
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (this.validateForm()) {
-                this.submitForm();
-            }
-        });
+  validateBody() {
+    const bodyInput = this.shadowRoot.getElementById("body");
+    const bodyError = this.shadowRoot.getElementById("body-error");
+    const bodyCounter = this.shadowRoot.getElementById("body-counter");
+    const value = bodyInput.value.trim();
+    const length = value.length;
+
+    bodyCounter.textContent = `${length}/1000`;
+
+    if (length > 800) {
+      bodyCounter.className = "char-counter warning";
+    } else if (length > 950) {
+      bodyCounter.className = "char-counter error";
+    } else {
+      bodyCounter.className = "char-counter";
     }
 
-    validateTitle() {
-        const titleInput = this.shadowRoot.getElementById('title');
-        const titleError = this.shadowRoot.getElementById('title-error');
-        const titleCounter = this.shadowRoot.getElementById('title-counter');
-        const value = titleInput.value.trim();
-        const length = value.length;
-
-        titleCounter.textContent = `${length}/100`;
-        
-        if (length > 80) {
-            titleCounter.className = 'char-counter warning';
-        } else if (length > 95) {
-            titleCounter.className = 'char-counter error';
-        } else {
-            titleCounter.className = 'char-counter';
-        }
-
-        if (length === 0) {
-            this.showError(titleInput, titleError, 'Judul catatan tidak boleh kosong');
-            return false;
-        } else if (length < 3) {
-            this.showError(titleInput, titleError, 'Judul minimal 3 karakter');
-            return false;
-        } else {
-            this.showValid(titleInput, titleError);
-            return true;
-        }
+    if (length === 0) {
+      this.showError(bodyInput, bodyError, "Isi catatan tidak boleh kosong");
+      return false;
+    } else if (length < 10) {
+      this.showError(bodyInput, bodyError, "Isi catatan minimal 10 karakter");
+      return false;
+    } else {
+      this.showValid(bodyInput, bodyError);
+      return true;
     }
+  }
 
-    validateBody() {
-        const bodyInput = this.shadowRoot.getElementById('body');
-        const bodyError = this.shadowRoot.getElementById('body-error');
-        const bodyCounter = this.shadowRoot.getElementById('body-counter');
-        const value = bodyInput.value.trim();
-        const length = value.length;
+  validateForm() {
+    const titleValid = this.validateTitle();
+    const bodyValid = this.validateBody();
+    return titleValid && bodyValid;
+  }
 
-        bodyCounter.textContent = `${length}/1000`;
-        
-        if (length > 800) {
-            bodyCounter.className = 'char-counter warning';
-        } else if (length > 950) {
-            bodyCounter.className = 'char-counter error';
-        } else {
-            bodyCounter.className = 'char-counter';
-        }
-
-        if (length === 0) {
-            this.showError(bodyInput, bodyError, 'Isi catatan tidak boleh kosong');
-            return false;
-        } else if (length < 10) {
-            this.showError(bodyInput, bodyError, 'Isi catatan minimal 10 karakter');
-            return false;
-        } else {
-            this.showValid(bodyInput, bodyError);
-            return true;
-        }
+  showError(input, errorElement, message) {
+    input.className = "form-input error";
+    if (input.tagName === "TEXTAREA") {
+      input.className = "form-textarea error";
     }
+    errorElement.textContent = message;
+    errorElement.className = "validation-message show";
+  }
 
-    validateForm() {
-        const titleValid = this.validateTitle();
-        const bodyValid = this.validateBody();
-        return titleValid && bodyValid;
+  showValid(input, errorElement) {
+    input.className = "form-input valid";
+    if (input.tagName === "TEXTAREA") {
+      input.className = "form-textarea valid";
     }
+    errorElement.className = "validation-message";
+  }
 
-    showError(input, errorElement, message) {
-        input.className = 'form-input error';
-        if (input.tagName === 'TEXTAREA') {
-            input.className = 'form-textarea error';
-        }
-        errorElement.textContent = message;
-        errorElement.className = 'validation-message show';
-    }
+  async submitForm() {
+    const titleInput = this.shadowRoot.getElementById("title");
+    const bodyInput = this.shadowRoot.getElementById("body");
+    const submitBtn = this.shadowRoot.getElementById("submit-btn");
 
-    showValid(input, errorElement) {
-        input.className = 'form-input valid';
-        if (input.tagName === 'TEXTAREA') {
-            input.className = 'form-textarea valid';
-        }
-        errorElement.className = 'validation-message';
-    }
+    const noteData = {
+      title: titleInput.value.trim(),
+      body: bodyInput.value.trim(),
+    };
 
-    async submitForm() {
-        const titleInput = this.shadowRoot.getElementById('title');
-        const bodyInput = this.shadowRoot.getElementById('body');
-        const submitBtn = this.shadowRoot.getElementById('submit-btn');
+    // Disable button temporarily
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = "<span>⏳</span> Menambahkan...";
 
-        const noteData = {
-            title: titleInput.value.trim(),
-            body: bodyInput.value.trim()
-        };
+    // Dispatch custom event
+    this.dispatchEvent(
+      new CustomEvent("add-note", {
+        bubbles: true,
+        detail: noteData,
+      }),
+    );
 
-        // Disable button temporarily
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>⏳</span> Menambahkan...';
+    // Reset form after successful submission
+    setTimeout(() => {
+      titleInput.value = "";
+      bodyInput.value = "";
+      titleInput.className = "form-input";
+      bodyInput.className = "form-textarea";
+      this.shadowRoot.getElementById("title-counter").textContent = "0/100";
+      this.shadowRoot.getElementById("body-counter").textContent = "0/1000";
+      this.shadowRoot.getElementById("title-counter").className =
+        "char-counter";
+      this.shadowRoot.getElementById("body-counter").className = "char-counter";
 
-        // Dispatch custom event
-        this.dispatchEvent(new CustomEvent('add-note', {
-            bubbles: true,
-            detail: noteData
-        }));
-
-        // Reset form after successful submission
-        setTimeout(() => {
-            titleInput.value = '';
-            bodyInput.value = '';
-            titleInput.className = 'form-input';
-            bodyInput.className = 'form-textarea';
-            this.shadowRoot.getElementById('title-counter').textContent = '0/100';
-            this.shadowRoot.getElementById('body-counter').textContent = '0/1000';
-            this.shadowRoot.getElementById('title-counter').className = 'char-counter';
-            this.shadowRoot.getElementById('body-counter').className = 'char-counter';
-            
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<span>➕</span> Tambah Catatan';
-        }, 1000);
-    }
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>➕</span> Tambah Catatan";
+    }, 1000);
+  }
 }
 
-customElements.define('note-form', NoteForm);
+customElements.define("note-form", NoteForm);

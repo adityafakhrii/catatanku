@@ -1,40 +1,41 @@
 class NoteItem extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
 
-    static get observedAttributes() {
-        return ['note-id', 'note-title', 'note-body', 'note-date', 'archived'];
-    }
+  static get observedAttributes() {
+    return ["note-id", "note-title", "note-body", "note-date", "archived"];
+  }
 
-    connectedCallback() {
-        this.render();
-    }
+  connectedCallback() {
+    this.render();
+  }
 
-    attributeChangedCallback() {
-        this.render();
-    }
+  attributeChangedCallback() {
+    this.render();
+  }
 
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('id-ID', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
+  formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("id-ID", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
-    render() {
-        const noteId = this.getAttribute('note-id') || '';
-        const title = this.getAttribute('note-title') || 'Tanpa Judul';
-        const body = this.getAttribute('note-body') || 'Tanpa isi';
-        const createdAt = this.getAttribute('note-date') || new Date().toISOString();
-        const archived = this.getAttribute('archived') === 'true';
+  render() {
+    const noteId = this.getAttribute("note-id") || "";
+    const title = this.getAttribute("note-title") || "Tanpa Judul";
+    const body = this.getAttribute("note-body") || "Tanpa isi";
+    const createdAt =
+      this.getAttribute("note-date") || new Date().toISOString();
+    const archived = this.getAttribute("archived") === "true";
 
-        this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
             <style>
                 :host {
@@ -69,7 +70,7 @@ class NoteItem extends HTMLElement {
                     left: 0;
                     right: 0;
                     height: 4px;
-                    background: ${archived ? 'linear-gradient(90deg, #ffa726, #ff7043)' : 'linear-gradient(90deg, #667eea, #764ba2)'};
+                    background: ${archived ? "linear-gradient(90deg, #ffa726, #ff7043)" : "linear-gradient(90deg, #667eea, #764ba2)"};
                 }
                 
                 .note-card:hover {
@@ -97,7 +98,7 @@ class NoteItem extends HTMLElement {
                 }
                 
                 .note-status {
-                    background: ${archived ? '#ffa726' : '#667eea'};
+                    background: ${archived ? "#ffa726" : "#667eea"};
                     color: white;
                     padding: 4px 12px;
                     border-radius: 20px;
@@ -236,7 +237,7 @@ class NoteItem extends HTMLElement {
             <article class="note-card">
                 <div class="note-header">
                     <h3 class="note-title">${title}</h3>
-                    <span class="note-status">${archived ? 'Diarsipkan' : 'Aktif'}</span>
+                    <span class="note-status">${archived ? "Diarsipkan" : "Aktif"}</span>
                 </div>
                 
                 <div class="note-body">${body}</div>
@@ -247,8 +248,8 @@ class NoteItem extends HTMLElement {
                         ${this.formatDate(createdAt)}
                     </time>
                     <div class="note-actions">
-                        <button class="action-btn archive-btn" title="${archived ? 'Batal Arsip' : 'Arsipkan'}" data-note-id="${noteId}">
-                            <i class="fas ${archived ? 'fa-box-open' : 'fa-box'}"></i>
+                        <button class="action-btn archive-btn" title="${archived ? "Batal Arsip" : "Arsipkan"}" data-note-id="${noteId}">
+                            <i class="fas ${archived ? "fa-box-open" : "fa-box"}"></i>
                         </button>
                         <button class="action-btn delete-btn" title="Hapus" data-note-id="${noteId}">
                             <i class="fas fa-trash-alt"></i>
@@ -258,27 +259,31 @@ class NoteItem extends HTMLElement {
             </article>
         `;
 
-        // Add event listeners
-        const archiveBtn = this.shadowRoot.querySelector('.archive-btn');
-        const deleteBtn = this.shadowRoot.querySelector('.delete-btn');
+    // Add event listeners
+    const archiveBtn = this.shadowRoot.querySelector(".archive-btn");
+    const deleteBtn = this.shadowRoot.querySelector(".delete-btn");
 
-        archiveBtn.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('archive-note', {
-                bubbles: true,
-                detail: { 
-                    noteId: noteId,
-                    archived: !archived 
-                }
-            }));
-        });
+    archiveBtn.addEventListener("click", () => {
+      this.dispatchEvent(
+        new CustomEvent("archive-note", {
+          bubbles: true,
+          detail: {
+            noteId: noteId,
+            archived: !archived,
+          },
+        }),
+      );
+    });
 
-        deleteBtn.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('delete-note', {
-                bubbles: true,
-                detail: { noteId: noteId }
-            }));
-        });
-    }
+    deleteBtn.addEventListener("click", () => {
+      this.dispatchEvent(
+        new CustomEvent("delete-note", {
+          bubbles: true,
+          detail: { noteId: noteId },
+        }),
+      );
+    });
+  }
 }
 
-customElements.define('note-item', NoteItem);
+customElements.define("note-item", NoteItem);

@@ -34,17 +34,23 @@ Aplikasi catatan modern yang dibangun dengan Web Components, Webpack, dan RESTfu
 ## Penggunaan
 
 ### Development
+
 Jalankan development server:
+
 ```bash
 npm run start-dev
 ```
+
 Aplikasi akan tersedia di `http://localhost:9000`
 
 ### Production Build
+
 Build aplikasi untuk production:
+
 ```bash
 npm run build
 ```
+
 File hasil build akan tersedia di folder `dist/`
 
 ## Struktur Project
@@ -69,6 +75,7 @@ src/
 ## API Integration
 
 Aplikasi ini menggunakan Notes API dari Dicoding:
+
 - Base URL: `https://notes-api.dicoding.dev/v2`
 - Endpoints yang digunakan:
   - `GET /notes` - Ambil catatan aktif
@@ -81,21 +88,25 @@ Aplikasi ini menggunakan Notes API dari Dicoding:
 ## Fitur Unggulan
 
 ### Loading Indicators
+
 - Loading overlay untuk operasi yang membutuhkan waktu
 - Loading indicator component untuk menampilkan status loading
 - Progress indicators pada form submission
 
 ### Error Handling
+
 - Notifikasi error yang informatif menggunakan SweetAlert2
 - Fallback untuk kegagalan network requests
 - Validasi form dengan feedback real-time
 
 ### Animasi
+
 - Smooth transitions menggunakan Animate.css
 - Hover effects dan micro-interactions
 - Staggered animations untuk list items
 
 ### Responsive Design
+
 - Mobile-first approach
 - Flexible grid layout
 - Touch-friendly interface

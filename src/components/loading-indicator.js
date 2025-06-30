@@ -1,26 +1,26 @@
 class LoadingIndicator extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
 
-    static get observedAttributes() {
-        return ['message', 'size'];
-    }
+  static get observedAttributes() {
+    return ["message", "size"];
+  }
 
-    connectedCallback() {
-        this.render();
-    }
+  connectedCallback() {
+    this.render();
+  }
 
-    attributeChangedCallback() {
-        this.render();
-    }
+  attributeChangedCallback() {
+    this.render();
+  }
 
-    render() {
-        const message = this.getAttribute('message') || 'Memuat catatan...';
-        const size = this.getAttribute('size') || 'normal';
+  render() {
+    const message = this.getAttribute("message") || "Memuat catatan...";
+    const size = this.getAttribute("size") || "normal";
 
-        this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     display: block;
@@ -29,7 +29,7 @@ class LoadingIndicator extends HTMLElement {
                 
                 .loading-container {
                     text-align: center;
-                    padding: ${size === 'large' ? '60px 20px' : '40px 20px'};
+                    padding: ${size === "large" ? "60px 20px" : "40px 20px"};
                     color: #666;
                     animation: fadeIn 0.5s ease-out;
                 }
@@ -40,13 +40,13 @@ class LoadingIndicator extends HTMLElement {
                 }
                 
                 .loading-spinner i {
-                    font-size: ${size === 'large' ? '3rem' : '2rem'};
+                    font-size: ${size === "large" ? "3rem" : "2rem"};
                     color: #667eea;
                     animation: spin 1s linear infinite;
                 }
                 
                 .loading-message {
-                    font-size: ${size === 'large' ? '1.2rem' : '1.1rem'};
+                    font-size: ${size === "large" ? "1.2rem" : "1.1rem"};
                     font-weight: 500;
                     color: #4a5568;
                 }
@@ -78,18 +78,18 @@ class LoadingIndicator extends HTMLElement {
                 <div class="loading-message pulse">${message}</div>
             </div>
         `;
-    }
+  }
 
-    show(message) {
-        if (message) {
-            this.setAttribute('message', message);
-        }
-        this.style.display = 'block';
+  show(message) {
+    if (message) {
+      this.setAttribute("message", message);
     }
+    this.style.display = "block";
+  }
 
-    hide() {
-        this.style.display = 'none';
-    }
+  hide() {
+    this.style.display = "none";
+  }
 }
 
-customElements.define('loading-indicator', LoadingIndicator);
+customElements.define("loading-indicator", LoadingIndicator);

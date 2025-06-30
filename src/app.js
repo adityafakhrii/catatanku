@@ -1,13 +1,11 @@
-// Import styles
+
 import './styles/main.css';
 
-// Import components
 import './components/app-header.js';
 import './components/note-form.js';
 import './components/note-item.js';
 import './components/loading-indicator.js';
 
-// Import services and utilities
 import NotesAPI from './services/notes-api.js';
 import NotificationManager from './utils/notification.js';
 
@@ -16,7 +14,7 @@ class NotesApp {
         this.api = new NotesAPI();
         this.notes = [];
         this.archivedNotes = [];
-        this.currentView = 'active'; // 'active' or 'archived'
+        this.currentView = 'active';
         this.notesContainer = document.getElementById('notes-container');
         this.loadingOverlay = document.getElementById('loading-overlay');
         this.init();
@@ -28,12 +26,10 @@ class NotesApp {
     }
 
     setupEventListeners() {
-        // Form submission
         document.addEventListener('add-note', async (event) => {
             await this.addNote(event.detail);
         });
 
-        // Note actions
         document.addEventListener('archive-note', async (event) => {
             const { noteId, archived } = event.detail;
             await this.toggleArchiveNote(noteId, archived);
@@ -44,7 +40,6 @@ class NotesApp {
             await this.deleteNote(noteId);
         });
 
-        // View toggle buttons
         const activeNotesBtn = document.getElementById('active-notes-btn');
         const archivedNotesBtn = document.getElementById('archived-notes-btn');
 
@@ -69,7 +64,6 @@ class NotesApp {
         try {
             this.showLoadingIndicator('Memuat catatan...');
             
-            // Load both active and archived notes
             const [activeResponse, archivedResponse] = await Promise.all([
                 this.api.getNotes(),
                 this.api.getArchivedNotes()
@@ -98,10 +92,8 @@ class NotesApp {
             const response = await this.api.createNote(noteData);
             
             if (response.status === 'success') {
-                // Add to local array
                 this.notes.unshift(response.data);
                 
-                // Re-render if currently viewing active notes
                 if (this.currentView === 'active') {
                     this.renderNotes();
                 }
